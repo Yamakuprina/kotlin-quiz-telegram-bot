@@ -10,12 +10,13 @@ data class User(
     @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long = 0L,
 
-    @Column(name = "name", length = 200)
+    @Column(name = "name")
     val name: String = "",
 
     @Column(name = "score")
     val score : Int,
 
     @Column(name = "state")
+    @Enumerated(EnumType.STRING)
     val state : QuizState
 )
