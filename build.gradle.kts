@@ -20,6 +20,7 @@ configurations {
 
 repositories {
     mavenCentral()
+    maven(uri("https://jitpack.io"))
 }
 
 dependencies {
@@ -29,6 +30,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("javax.validation:validation-api:2.0.1.Final")
+    implementation("com.just-ai.jaicf:core:1.2.4")
+    implementation("com.just-ai.jaicf:telegram:1.2.4")
+    implementation("io.github.kotlin-telegram-bot.kotlin-telegram-bot:telegram:6.0.4")
     compileOnly("org.projectlombok:lombok")
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.projectlombok:lombok")
