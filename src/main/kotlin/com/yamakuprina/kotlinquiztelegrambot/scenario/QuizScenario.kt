@@ -15,9 +15,22 @@ class QuizScenario : Scenario {
             action {
                 reactions.run {
                     sayRandom("Hi!", "Hello there!")
-                    say("How are you doing?")
+                    say("What is your name?")
                 }
             }
+
+            state("name"){
+                activators {
+                    catchAll()
+                }
+
+                action {
+                    context.client["name"] = request.input
+                    reactions.say("Nice to meet you ${context.client["name"]}")
+                }
+            }
+
         }
+
     }
 }
