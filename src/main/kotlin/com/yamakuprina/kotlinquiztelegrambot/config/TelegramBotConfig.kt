@@ -13,11 +13,11 @@ import org.springframework.context.annotation.Configuration
 class TelegramBotConfig(
 
     @Value("5770927943:AAEhtHnyBM8azDuKSNZLwXtThUGnclqR24s")
-    val telegramBotToken : String
+    val telegramBotToken: String
 ) {
 
     @Bean
-    fun botApi(scenario : Scenario) : BotApi{
+    fun botApi(scenario: Scenario): BotApi {
         return BotEngine(
             scenario = scenario,
             activators = arrayOf(
@@ -27,7 +27,7 @@ class TelegramBotConfig(
     }
 
     @Bean
-    fun telegramChannel(bot : BotApi) : TelegramChannel{
+    fun telegramChannel(bot: BotApi): TelegramChannel {
         val telegramChannel = TelegramChannel(bot, telegramBotToken)
         telegramChannel.run()
         return telegramChannel
