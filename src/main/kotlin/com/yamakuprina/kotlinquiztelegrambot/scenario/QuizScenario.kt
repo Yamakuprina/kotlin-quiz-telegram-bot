@@ -25,7 +25,7 @@ class QuizScenario(
 
             action {
                 reactions.run {
-                    sayRandom("Hi!", "Hello there!")
+                    sayRandom("Hi!", "Hello there!","Greetings!")
                     say("Want to start quiz?")
                     buttons("quiz" toState "/main/quiz")
                 }
