@@ -2,8 +2,8 @@ package com.yamakuprina.kotlinquiztelegrambot.scenario
 
 import com.justai.jaicf.builder.createModel
 import com.justai.jaicf.model.scenario.Scenario
-import com.justai.jaicf.reactions.toState
 import com.justai.jaicf.reactions.buttons
+import com.justai.jaicf.reactions.toState
 import com.yamakuprina.kotlinquiztelegrambot.model.Question
 import com.yamakuprina.kotlinquiztelegrambot.repository.QuestionRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -14,8 +14,8 @@ class QuizScenario(
     @Autowired
     val questionRepository: QuestionRepository
 ) : Scenario {
-    var randomQuestions : MutableList<Question> = mutableListOf()
-    var wrongAnswers : MutableMap<Question,String> = mutableMapOf()
+    var randomQuestions: MutableList<Question> = mutableListOf()
+    var wrongAnswers: MutableMap<Question, String> = mutableMapOf()
 
     override val model = createModel {
         state("main") {
@@ -25,14 +25,14 @@ class QuizScenario(
 
             action {
                 reactions.run {
-                    sayRandom("Hi!", "Hello there!","Greetings!")
+                    sayRandom("Hi!", "Hello there!", "Greetings!")
                     say("Want to start quiz?")
                     buttons("quiz" toState "/main/quiz")
                 }
             }
 
-            state("quiz"){
-                var score:Int = 0
+            state("quiz") {
+                var score: Int = 0
 
                 activators {
                     intent("quiz")
@@ -40,7 +40,7 @@ class QuizScenario(
 
                 action {
                     randomQuestions = questionRepository.getRandomQuestions().toMutableList()
-                    if(randomQuestions.size==0){
+                    if (randomQuestions.size == 0) {
                         reactions.go("/errorFallback")
                     }
                     wrongAnswers = mutableMapOf()
@@ -48,9 +48,9 @@ class QuizScenario(
                     reactions.go("/main/quiz/question")
                 }
 
-                state("question"){
-                    var question:Question? = null
-                    var options : List<String> = listOf()
+                state("question") {
+                    var question: Question? = null
+                    var options: List<String> = listOf()
 
                     activators {
                         regex("/question")
@@ -58,12 +58,17 @@ class QuizScenario(
 
                     action {
                         question = randomQuestions.removeLast()
-                        options = mutableListOf(question!!.optionOne,question!!.optionTwo,question!!.optionThree,question!!.correctAnswer).shuffled()
-                        
-                        val questionMessage : String = question!!.question + "\n"+
-                                "\n1. ${options[0]}"+
-                                "\n2. ${options[1]}"+
-                                "\n3. ${options[2]}"+
+                        options = mutableListOf(
+                            question!!.optionOne,
+                            question!!.optionTwo,
+                            question!!.optionThree,
+                            question!!.correctAnswer
+                        ).shuffled()
+
+                        val questionMessage: String = question!!.question + "\n" +
+                                "\n1. ${options[0]}" +
+                                "\n2. ${options[1]}" +
+                                "\n3. ${options[2]}" +
                                 "\n4. ${options[3]}"
                         reactions.run {
                             say(questionMessage)
@@ -76,17 +81,17 @@ class QuizScenario(
                         }
                     }
 
-                    state("1"){
-                        activators{
+                    state("1") {
+                        activators {
                             intent("1")
                         }
                         action {
-                            if(options[0]==question!!.correctAnswer){
-                                score+=1
+                            if (options[0] == question!!.correctAnswer) {
+                                score += 1
                             } else {
                                 wrongAnswers[question!!] = options[0]
                             }
-                            if (randomQuestions.size==0){
+                            if (randomQuestions.size == 0) {
                                 reactions.go("/main/quiz/score")
                             } else {
                                 reactions.go("/main/quiz/question")
@@ -94,17 +99,17 @@ class QuizScenario(
                         }
                     }
 
-                    state("2"){
-                        activators{
+                    state("2") {
+                        activators {
                             intent("2")
                         }
                         action {
-                            if(options[1]==question!!.correctAnswer){
-                                score+=1
+                            if (options[1] == question!!.correctAnswer) {
+                                score += 1
                             } else {
                                 wrongAnswers[question!!] = options[1]
                             }
-                            if (randomQuestions.size==0){
+                            if (randomQuestions.size == 0) {
                                 reactions.go("/main/quiz/score")
                             } else {
                                 reactions.go("/main/quiz/question")
@@ -112,17 +117,17 @@ class QuizScenario(
                         }
                     }
 
-                    state("3"){
-                        activators{
+                    state("3") {
+                        activators {
                             intent("3")
                         }
                         action {
-                            if(options[2]==question!!.correctAnswer){
-                                score+=1
+                            if (options[2] == question!!.correctAnswer) {
+                                score += 1
                             } else {
                                 wrongAnswers[question!!] = options[2]
                             }
-                            if (randomQuestions.size==0){
+                            if (randomQuestions.size == 0) {
                                 reactions.go("/main/quiz/score")
                             } else {
                                 reactions.go("/main/quiz/question")
@@ -130,17 +135,17 @@ class QuizScenario(
                         }
                     }
 
-                    state("4"){
-                        activators{
+                    state("4") {
+                        activators {
                             intent("4")
                         }
                         action {
-                            if(options[3]==question!!.correctAnswer){
-                                score+=1
+                            if (options[3] == question!!.correctAnswer) {
+                                score += 1
                             } else {
                                 wrongAnswers[question!!] = options[3]
                             }
-                            if (randomQuestions.size==0){
+                            if (randomQuestions.size == 0) {
                                 reactions.go("/main/quiz/score")
                             } else {
                                 reactions.go("/main/quiz/question")
@@ -149,26 +154,26 @@ class QuizScenario(
                     }
                 }
 
-                state("score"){
+                state("score") {
                     action {
                         reactions.run {
                             say("You finished test!")
                             say("Your score: $score out of 20")
-                            if(wrongAnswers.isNotEmpty()){
+                            if (wrongAnswers.isNotEmpty()) {
                                 reactions.buttons("Show wrong answers" toState "/main/quiz/score/wrongAnswers")
                             }
                         }
                     }
 
-                    state("wrongAnswers"){
-                        action{
-                            for(entry in wrongAnswers){
-                                reactions.run{
-                                    val questionMessage1 = "Question:" + "\n"+
-                                            entry.key.question + "\n\n"+
-                                            "Correct answer:" +"\n"+
-                                            entry.key.correctAnswer+"\n"+
-                                            "Your answer:" +"\n"+
+                    state("wrongAnswers") {
+                        action {
+                            for (entry in wrongAnswers) {
+                                reactions.run {
+                                    val questionMessage1 = "Question:" + "\n" +
+                                            entry.key.question + "\n\n" +
+                                            "Correct answer:" + "\n" +
+                                            entry.key.correctAnswer + "\n" +
+                                            "Your answer:" + "\n" +
                                             entry.value
                                     say(questionMessage1)
                                 }
@@ -180,8 +185,8 @@ class QuizScenario(
             }
 
         }
-        state("errorFallback"){
-            action{
+        state("errorFallback") {
+            action {
                 reactions.say("Something went wrong :( \nTry another time!")
             }
         }
