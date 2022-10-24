@@ -40,6 +40,9 @@ class QuizScenario(
 
                 action {
                     randomQuestions = questionRepository.getRandomQuestions().toMutableList()
+                    if(randomQuestions.size==0){
+                        reactions.go("/errorFallback")
+                    }
                     wrongAnswers = mutableMapOf()
                     score = 0
                     reactions.go("/main/quiz/question")
@@ -176,6 +179,10 @@ class QuizScenario(
             }
 
         }
-
+        state("errorFallback"){
+            action{
+                reactions.say("Something went wrong :( \nTry another time!")
+            }
+        }
     }
 }
