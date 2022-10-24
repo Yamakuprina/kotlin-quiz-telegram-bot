@@ -14,7 +14,8 @@ class QuizScenario(
     @Autowired
     val questionRepository: QuestionRepository
 ) : Scenario {
-    var randomQuestions : MutableList<Question> = questionRepository.getRandomQuestions().toMutableList()
+    var randomQuestions : MutableList<Question> = mutableListOf()
+    var wrongAnswers : MutableMap<Question,String> = mutableMapOf()
 
     override val model = createModel {
         state("main") {
@@ -38,14 +39,14 @@ class QuizScenario(
                 }
 
                 action {
-                    if (randomQuestions.size==0){
-                        randomQuestions = questionRepository.getRandomQuestions().toMutableList()
-                    }
+                    randomQuestions = questionRepository.getRandomQuestions().toMutableList()
+                    wrongAnswers = mutableMapOf()
+                    score = 0
                     reactions.go("/main/quiz/question")
                 }
 
                 state("question"){
-                    var question:Question = randomQuestions.last()
+                    var question:Question? = null
                     var options : List<String> = listOf()
 
                     activators {
@@ -54,9 +55,9 @@ class QuizScenario(
 
                     action {
                         question = randomQuestions.removeLast()
-                        options = mutableListOf(question.optionOne,question.optionTwo,question.optionThree,question.correctAnswer).shuffled()
+                        options = mutableListOf(question!!.optionOne,question!!.optionTwo,question!!.optionThree,question!!.correctAnswer).shuffled()
 
-                        var questionMessage : String = question.question + "\n"
+                        var questionMessage : String = question!!.question + "\n"
                         for(i in 1..4){
                             questionMessage+="\n ${i}. ${options[i-1]}"
                         }
@@ -76,8 +77,10 @@ class QuizScenario(
                             intent("1")
                         }
                         action {
-                            if(options[0]==question.correctAnswer){
+                            if(options[0]==question!!.correctAnswer){
                                 score+=1
+                            } else {
+                                wrongAnswers[question!!] = options[0]
                             }
                             if (randomQuestions.size==0){
                                 reactions.go("/main/quiz/score")
@@ -92,8 +95,10 @@ class QuizScenario(
                             intent("2")
                         }
                         action {
-                            if(options[1]==question.correctAnswer){
+                            if(options[1]==question!!.correctAnswer){
                                 score+=1
+                            } else {
+                                wrongAnswers[question!!] = options[1]
                             }
                             if (randomQuestions.size==0){
                                 reactions.go("/main/quiz/score")
@@ -108,8 +113,10 @@ class QuizScenario(
                             intent("3")
                         }
                         action {
-                            if(options[2]==question.correctAnswer){
+                            if(options[2]==question!!.correctAnswer){
                                 score+=1
+                            } else {
+                                wrongAnswers[question!!] = options[2]
                             }
                             if (randomQuestions.size==0){
                                 reactions.go("/main/quiz/score")
@@ -124,8 +131,10 @@ class QuizScenario(
                             intent("4")
                         }
                         action {
-                            if(options[3]==question.correctAnswer){
+                            if(options[3]==question!!.correctAnswer){
                                 score+=1
+                            } else {
+                                wrongAnswers[question!!] = options[3]
                             }
                             if (randomQuestions.size==0){
                                 reactions.go("/main/quiz/score")
@@ -141,8 +150,28 @@ class QuizScenario(
                         reactions.run {
                             say("You finished test!")
                             say("Your score: $score out of 20")
+                            if(wrongAnswers.isNotEmpty()){
+                                reactions.buttons("Show wrong answers" toState "/main/quiz/score/wrongAnswers")
+                            }
                         }
                     }
+
+                    state("wrongAnswers"){
+                        action{
+                            for(entry in wrongAnswers){
+                                reactions.run{
+                                    val questionMessage1 = "Question:" + "\n"+
+                                            entry.key.question + "\n\n"+
+                                            "Correct answer:" +"\n"+
+                                            entry.key.correctAnswer+"\n"+
+                                            "Your answer:" +"\n"+
+                                            entry.value
+                                    say(questionMessage1)
+                                }
+                            }
+                        }
+                    }
+
                 }
             }
 
