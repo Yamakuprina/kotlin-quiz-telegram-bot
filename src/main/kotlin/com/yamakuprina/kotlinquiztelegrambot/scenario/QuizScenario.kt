@@ -59,11 +59,12 @@ class QuizScenario(
                     action {
                         question = randomQuestions.removeLast()
                         options = mutableListOf(question!!.optionOne,question!!.optionTwo,question!!.optionThree,question!!.correctAnswer).shuffled()
-
-                        var questionMessage : String = question!!.question + "\n"
-                        for(i in 1..4){
-                            questionMessage+="\n ${i}. ${options[i-1]}"
-                        }
+                        
+                        val questionMessage : String = question!!.question + "\n"+
+                                "\n1. ${options[0]}"+
+                                "\n2. ${options[1]}"+
+                                "\n3. ${options[2]}"+
+                                "\n4. ${options[3]}"
                         reactions.run {
                             say(questionMessage)
                             buttons(
