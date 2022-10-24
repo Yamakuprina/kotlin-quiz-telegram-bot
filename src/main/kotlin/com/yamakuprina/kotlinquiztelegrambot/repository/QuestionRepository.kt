@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository
 interface QuestionRepository : JpaRepository<Question, Long> {
 
     @Query(nativeQuery = true, value = "select * from questions order by random() limit 20")
-    fun getRandomQuestions():List<Question>
+    fun getRandomQuestions(): List<Question>
 }
