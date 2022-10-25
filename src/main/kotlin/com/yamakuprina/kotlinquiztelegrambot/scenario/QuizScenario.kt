@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component
 @Component
 class QuizScenario(
     @Autowired
-    val questionRepository: QuestionRepository
+    val questionRepository: QuestionRepository,
+    @Autowired
+    val defaultQuestions: List<Question>
 ) : Scenario {
     var randomQuestions: MutableList<Question> = mutableListOf()
     var wrongAnswers: MutableMap<Question, String> = mutableMapOf()
@@ -40,6 +42,9 @@ class QuizScenario(
 
                 action {
                     randomQuestions = questionRepository.getRandomQuestions().toMutableList()
+                    if (randomQuestions.size < 20){
+                        randomQuestions = defaultQuestions.shuffled().toMutableList()
+                    }
                     if (randomQuestions.size == 0) {
                         reactions.go("/errorFallback")
                     }
