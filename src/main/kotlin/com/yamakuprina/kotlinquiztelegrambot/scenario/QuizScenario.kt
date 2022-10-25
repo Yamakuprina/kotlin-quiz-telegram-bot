@@ -52,6 +52,7 @@ class QuizScenario(
                     context.session["wrongAnswers"] = mutableMapOf<Question, String>()
                     //wrongAnswers = mutableMapOf()
                     //score = 0
+                    context.session["questionNumber"] = 0
                     context.session["score"] = 0
                     reactions.go("/main/quiz/question")
                 }
@@ -80,8 +81,9 @@ class QuizScenario(
 //                            question!!.optionThree,
 //                            question!!.correctAnswer
 //                        ).shuffled()
-
-                        val questionMessage: String = (context.session["question"] as Question).question + "\n" +
+                        context.session.compute("questionNumber") { _, v -> v as Int + 1}
+                        val questionMessage: String ="Question "+ (context.session["questionNumber"] as Int) + " of 20"+"\n\n"+
+                            (context.session["question"] as Question).question + "\n" +
                                 "\n1. ${(context.session["options"] as MutableList<*>)[0]}" +
                                 "\n2. ${(context.session["options"] as MutableList<*>)[1]}" +
                                 "\n3. ${(context.session["options"] as MutableList<*>)[2]}" +
