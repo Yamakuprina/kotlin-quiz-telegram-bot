@@ -177,7 +177,7 @@ class QuizScenario(
                                     val questionMessage1 = "Question:" + "\n" +
                                             entry.key.question + "\n\n" +
                                             "Correct answer:" + "\n" +
-                                            entry.key.correctAnswer + "\n" +
+                                            entry.key.correctAnswer + "\n\n" +
                                             "Your answer:" + "\n" +
                                             entry.value
                                     say(questionMessage1)
