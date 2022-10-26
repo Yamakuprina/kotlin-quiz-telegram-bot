@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration
 @Configuration
 class TelegramBotConfig(
 
-    @Value("5770927943:AAEhtHnyBM8azDuKSNZLwXtThUGnclqR24s")
+    @Value("5657886353:AAGxX8F4vxToz5wrdEMvaxXgkC-fRI8UnIE")
     val telegramBotToken: String
 ) {
 
