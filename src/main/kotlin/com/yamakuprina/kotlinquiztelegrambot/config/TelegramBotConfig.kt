@@ -6,13 +6,16 @@ import com.justai.jaicf.api.BotApi
 import com.justai.jaicf.channel.telegram.TelegramChannel
 import com.justai.jaicf.model.scenario.Scenario
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.boot.ApplicationRunner
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.PropertySource
 
 @Configuration
+@PropertySource("classpath:bot.properties")
 class TelegramBotConfig(
 
-    @Value("5657886353:AAGxX8F4vxToz5wrdEMvaxXgkC-fRI8UnIE")
+    @Value("\${bot.telegramBotToken}")
     val telegramBotToken: String
 ) {
 
@@ -27,9 +30,9 @@ class TelegramBotConfig(
     }
 
     @Bean
-    fun telegramChannel(bot: BotApi): TelegramChannel {
-        val telegramChannel = TelegramChannel(bot, telegramBotToken)
-        telegramChannel.run()
-        return telegramChannel
+    fun telegramChannel(bot: BotApi) : ApplicationRunner{
+        return ApplicationRunner {
+                args -> TelegramChannel(bot, telegramBotToken).run()
+        }
     }
 }
